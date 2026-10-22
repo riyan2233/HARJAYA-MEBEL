@@ -1,0 +1,6 @@
+{
+  "name": "HARJAYA MEBEL",
+  "description": "Aplikasi Arisan Barang & Mebel Profesional oleh Cak Riyan",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
