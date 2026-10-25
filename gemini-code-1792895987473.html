@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FATIN ART ADVERTISING - Katalog & Pemesanan Digital</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fdf4f2',
+                            100: '#fbe8e5',
+                            500: '#e05638',
+                            600: '#cc3f20',
+                            700: '#a83118',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col selection:bg-brand-500 selection:text-white">
+
+    <!-- Background Music Audio Element -->
+    <audio id="bgMusic" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf7f6.mp3?filename=acoustic-guitars-10712.mp3" type="audio/mp3">
+    </audio>
+
+    <!-- Top Notification Toast -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app" class="flex-1 flex flex-col">
+        <!-- Rendered dynamically by JavaScript -->
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- CONSTANTS & INITIAL DATA ---
+        const ADMIN_EMAIL = 'ekomariyanto63@gmail.com';
+        const ADMIN_PASS = 'donitata12@';
+        const DEFAULT_ADMIN_WA = '6282220221045';
+
+        const DEFAULT_PRODUCTS = [
+            { id: 'p1', name: 'Banner / Spanduk', category: 'Banner', price: 25000, desc: 'Cetak banner High Resolution bahan tebal 280gsm / 340gsm (Harga per meter)', img: 'https://placehold.co/600x400/e05638/ffffff?text=Banner+Percetakan' },
+            { id: 'p2', name: 'Undangan Pernikahan Eksklusif', category: 'Undangan', price: 1500, desc: 'Undangan cetak full color kualitas tajam, gratis plastik & label nama (Min. 300 lbr)', img: 'https://placehold.co/600x400/334155/ffffff?text=Undangan+Eksklusif' },
+            { id: 'p3', name: 'Stempel Flash / Otomatis', category: 'Stempel', price: 65000, desc: 'Stempel warna otomatis tanpa bantalan tinta, praktis & awet bergaransi', img: 'https://placehold.co/600x400/0284c7/ffffff?text=Stempel+Flash' },
+            { id: 'p4', name: 'Nota / Bon Custom', category: 'Nota', price: 35000, desc: 'Nota 1/2 folio / 1/4 folio rangkap 1, 2 atau 3 (NCR tanpa karbon)', img: 'https://placehold.co/600x400/16a34a/ffffff?text=Cetak+Nota' },
+            { id: 'p5', name: 'Sablon Kaos Manual / DTF', category: 'Sablon', price: 50000, desc: 'Sablon kaos komunitas, event, kelas atau perusahaan bahan katun combed 30s', img: 'https://placehold.co/600x400/9333ea/ffffff?text=Sablon+Kaos' },
+            { id: 'p6', name: 'Buku Yasin & Tahlil', category: 'Yasin', price: 12000, desc: 'Buku Yasin hardcover / softcover lengkap doa tahlil, foto almarhum & lembar kenang', img: 'https://placehold.co/600x400/ca8a04/ffffff?text=Buku+Yasin' },
+            { id: 'p7', name: 'Stiker Bontak (Kertas)', category: 'Stiker', price: 15000, desc: 'Stiker label makanan/produk kemasan bahan bontak, cetak lembaran A3+ potong kiss-cut', img: 'https://placehold.co/600x400/db2777/ffffff?text=Stiker+Bontak' },
+            { id: 'p8', name: 'Stiker Vinil (Anti Air)', category: 'Stiker', price: 22000, desc: 'Stiker bahan plastik PVC anti air & tahan cuaca panas untuk outdoor / frozen food', img: 'https://placehold.co/600x400/0d9488/ffffff?text=Stiker+Vinil' },
+            { id: 'p9', name: 'Cetak Foto + Bingkai', category: 'Foto', price: 40000, desc: 'Cetak foto berbagai ukuran plus bingkai minimalis elegan siap pajang', img: 'https://placehold.co/600x400/475569/ffffff?text=Cetak+Foto' },
+            { id: 'p10', name: 'Undangan Seri 2209', category: 'Undangan Seri', price: 2000, desc: 'Katalog seri eksklusif model lipat 2 elegan.', img: 'https://placehold.co/600x400/e05638/ffffff?text=Undangan+2209' },
+            { id: 'p11', name: 'Undangan Seri 2401', category: 'Undangan Seri', price: 2200, desc: 'Katalog seri model amplop modern minimalis.', img: 'https://placehold.co/600x400/334155/ffffff?text=Undangan+2401' },
+            { id: 'p12', name: 'Undangan Seri 2403', category: 'Undangan Seri', price: 2500, desc: 'Katalog seri motif rustic bunga vintage.', img: 'https://placehold.co/600x400/0284c7/ffffff?text=Undangan+2403' },
+            { id: 'p13', name: 'Undangan Seri 2405', category: 'Undangan Seri', price: 2100, desc: 'Katalog seri desain gold foil mewah.', img: 'https://placehold.co/600x400/16a34a/ffffff?text=Undangan+2405' },
+            { id: 'p14', name: 'Undangan Seri 2406', category: 'Undangan Seri', price: 2300, desc: 'Katalog seri aesthetic soft pastel.', img: 'https://placehold.co/600x400/9333ea/ffffff?text=Undangan+2406' },
+            { id: 'p15', name: 'Undangan Seri 2407', category: 'Undangan Seri', price: 2400, desc: 'Katalog seri hard cover semi eksklusif.', img: 'https://placehold.co/600x400/ca8a04/ffffff?text=Undangan+2407' },
+            { id: 'p16', name: 'Undangan Seri 2409', category: 'Undangan Seri', price: 2000, desc: 'Katalog seri klasik tradisional Jawa/Sunda.', img: 'https://placehold.co/600x400/db2777/ffffff?text=Undangan+2409' },
+            { id: 'p17', name: 'Undangan Seri 2510', category: 'Undangan Seri', price: 2600, desc: 'Katalog seri model celengan / saku unik.', img: 'https://placehold.co/600x400/0d9488/ffffff?text=Undangan+2510' },
+            { id: 'p18', name: 'Undangan Seri 2511', category: 'Undangan Seri', price: 2500, desc: 'Katalog seri hotprint emas timbul.', img: 'https://placehold.co/600x400/475569/ffffff?text=Undangan+2511' },
+            { id: 'p19', name: 'Undangan Seri 2513', category: 'Undangan Seri', price: 2200, desc: 'Katalog seri minimalis modern clean look.', img: 'https://placehold.co/600x400/e05638/ffffff?text=Undangan+2513' },
+            { id: 'p20', name: 'Undangan Seri 2515', category: 'Undangan Seri', price: 2300, desc: 'Katalog seri aesthetic floral watercolor.', img: 'https://placehold.co/600x400/334155/ffffff?text=Undangan+2515' },
+            { id: 'p21', name: 'Undangan Seri 2516', category: 'Undangan Seri', price: 2400, desc: 'Katalog seri motif batik nusantara.', img: 'https://placehold.co/600x400/0284c7/ffffff?text=Undangan+2516' },
+            { id: 'p22', name: 'Undangan Seri 2517', category: 'Undangan Seri', price: 2700, desc: 'Katalog seri laser cut design rumit.', img: 'https://placehold.co/600x400/16a34a/ffffff?text=Undangan+2517' },
+            { id: 'p23', name: 'Undangan Seri 2518', category: 'Undangan Seri', price: 2100, desc: 'Katalog seri saku pita satin eksklusif.', img: 'https://placehold.co/600x400/9333ea/ffffff?text=Undangan+2518' },
+            { id: 'p24', name: 'Undangan Seri 2519', category: 'Undangan Seri', price: 2500, desc: 'Katalog seri lipat 3 vertical premium.', img: 'https://placehold.co/600x400/ca8a04/ffffff?text=Undangan+2519' },
+            { id: 'p25', name: 'Undangan Seri 2520', category: 'Undangan Seri', price: 2800, desc: 'Katalog seri edisi spesial royal wedding.', img: 'https://placehold.co/600x400/db2777/ffffff?text=Undangan+2520' }
+        ];
+
+        // --- LOCAL STORAGE STATE MANAGEMENT ---
+        function getState() {
+            try {
+                const saved = localStorage.getItem('fatin_art_state_v3');
+                if (saved) {
+                    return JSON.parse(saved);
+                }
+            } catch(e) { console.error(e); }
+            
+            const defaultState = {
+                currentUser: null,
+                adminWhatsApp: DEFAULT_ADMIN_WA,
+                products: DEFAULT_PRODUCTS,
+                customers: [
+                    { code: 'CUST-001', name: 'Bpk. Budi Santoso', phone: '081234567890', email: 'budi@gmail.com', registeredAt: '2026-06-01' }
+                ],
+                orders: [
+                    { 
+                        id: 'ORD-1001', 
+                        customerCode: 'CUST-001', 
+                        customerName: 'Bpk. Budi Santoso', 
+                        phone: '081234567890',
+                        items: [{ name: 'Banner / Spanduk', qty: 2, price: 25000 }], 
+                        total: 50000, 
+                        status: 'Diproses', 
+                        estCompletion: 'Besok, Jam 14.00 WIB', 
+                        date: '2026-06-10 10:30',
+                        adminNotes: 'Segera dicetak menggunakan mesin outdoor highres.'
+                    }
+                ],
+                invoices: [
+                    {
+                        invoiceNo: 'INV-8801',
+                        orderId: 'ORD-1001',
+                        customerCode: 'CUST-001',
+                        customerName: 'Bpk. Budi Santoso',
+                        items: [{ name: 'Banner / Spanduk', qty: 2, price: 25000 }],
+                        total: 50000,
+                        status: 'Lunas',
+                        notes: 'Nota resmi Percetakan Fatin Art Advertising. Terima kasih telah mempercayakan cetakan Anda pada kami!',
+                        date: '2026-06-10'
+                    }
+                ],
+                savedLogin: null
+            };
+            saveState(defaultState);
+            return defaultState;
+        }
+
+        function saveState(state) {
+            try {
+                localStorage.setItem('fatin_art_state_v3', JSON.stringify(state));
+            } catch(e) { console.error(e); }
+        }
+
+        // --- UTILS ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if(!container) return;
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-xl text-white font-medium text-sm flex items-center gap-3 transform transition-all duration-300 translate-y-2 opacity-0 ${type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-slate-800'}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-circle-check text-lg' : type === 'error' ? 'fa-triangle-exclamation text-lg' : 'fa-circle-info text-lg'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function formatRupiah(num) {
+            return 'Rp ' + Number(num).toLocaleString('id-ID');
+        }
+
+        // --- RENDER ROUTER ---
+        let currentView = 'login';
+        let cart = [];
+        let isMusicPlaying = false;
+
+        function initApp() {
+            const state = getState();
+            if (state.currentUser) {
+                currentView = state.currentUser.role === 'admin' ? 'admin' : 'catalog';
+            }
+            render();
+        }
+
+        function toggleMusic() {
+            const audio = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicToggleBtn');
+            if (!audio) return;
+            if (isMusicPlaying) {
+                audio.pause();
+                isMusicPlaying = false;
+                if(btn) btn.innerHTML = '<i class="fa-solid fa-music text-slate-400"></i><span class="text-xs text-slate-600 hidden sm:inline">Musik: Mati</span>';
+                showToast('Musik latar dimatikan', 'info');
+            } else {
+                audio.play().then(() => {
+                    isMusicPlaying = true;
+                    if(btn) btn.innerHTML = '<i class="fa-solid fa-music text-brand-500 animate-bounce"></i><span class="text-xs font-semibold text-brand-600 hidden sm:inline">Musik: Hidup</span>';
+                    showToast('Musik latar diputar 🎶', 'success');
+                }).catch(e => {
+                    showToast('Klik sekali lagi untuk memutar musik', 'error');
+                });
+            }
+        }
+
+        function render() {
+            const state = getState();
+            const app = document.getElementById('app');
+            
+            let navbarHTML = '';
+            if (state.currentUser) {
+                const isAdmin = state.currentUser.role === 'admin';
+                navbarHTML = `
+                    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('${isAdmin ? 'admin' : 'catalog'}')">
+                                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-500 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                                    <i class="fa-solid fa-print text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h1 class="font-bold text-lg sm:text-xl text-slate-900 tracking-tight leading-none">FATIN ART ADVERTISING</h1>
+                                    <p class="text-xs font-medium text-brand-600 mt-1">Percetakan & Desain Grafis • Kab. Banyuwangi</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                <button id="musicToggleBtn" onclick="toggleMusic()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 transition flex items-center gap-2 border border-slate-200">
+                                    <i class="fa-solid fa-music text-slate-500"></i>
+                                    <span class="text-xs text-slate-600 hidden sm:inline">Musik</span>
+                                </button>
+
+                                ${isAdmin ? `
+                                    <button onclick="switchView('admin')" class="px-3 sm:px-4 py-2 rounded-xl bg-brand-50 text-brand-700 font-semibold text-xs sm:text-sm hover:bg-brand-100 transition flex items-center gap-2">
+                                        <i class="fa-solid fa-gauge-high"></i> <span class="hidden md:inline">Panel Admin</span>
+                                    </button>
+                                ` : `
+                                    <button onclick="switchView('catalog')" class="px-3 py-2 rounded-xl ${currentView === 'catalog' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'} font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+                                        <i class="fa-solid fa-store"></i> <span class="hidden md:inline">Katalog</span>
+                                    </button>
+                                    <button onclick="switchView('my_orders')" class="px-3 py-2 rounded-xl ${currentView === 'my_orders' ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'} font-semibold text-xs sm:text-sm transition flex items-center gap-2 relative">
+                                        <i class="fa-solid fa-box-archive"></i> <span class="hidden md:inline">Pesanan & Nota</span>
+                                    </button>
+                                    <button onclick="openCartModal()" class="px-3 py-2 rounded-xl bg-brand-600 text-white font-semibold text-xs sm:text-sm hover:bg-brand-700 transition flex items-center gap-2 shadow-md shadow-brand-600/20 relative">
+                                        <i class="fa-solid fa-cart-shopping"></i>
+                                        <span id="cartCountBadge" class="absolute -top-1.5 -right-1.5 bg-yellow-400 text-slate-900 font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center shadow ${cart.length === 0 ? 'hidden' : ''}">${cart.reduce((a,c)=>a+c.qty,0)}</span>
+                                    </button>
+                                `}
+
+                                <div class="h-6 w-px bg-slate-200 mx-1"></div>
+
+                                <div class="flex items-center gap-2">
+                                    <div class="text-right hidden sm:block">
+                                        <p class="text-xs font-bold text-slate-900">${state.currentUser.name}</p>
+                                        <p class="text-[10px] text-slate-500">${isAdmin ? 'Administrator' : `WA: ${state.currentUser.phone}`}</p>
+                                    </div>
+                                    <button onclick="logout()" class="p-2.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-100 transition" title="Keluar">
+                                        <i class="fa-solid fa-power-off text-sm"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                `;
+            }
+
+            let bodyContent = '';
+            if (!state.currentUser) {
+                bodyContent = renderLoginView(state);
+            } else if (state.currentUser.role === 'admin') {
+                bodyContent = renderAdminView(state);
+            } else {
+                if (currentView === 'my_orders') {
+                    bodyContent = renderCustomerOrdersView(state);
+                } else {
+                    bodyContent = renderCustomerCatalogView(state);
+                }
+            }
+
+            app.innerHTML = `
+                ${navbarHTML}
+                <main class="flex-1 flex flex-col">
+                    ${bodyContent}
+                </main>
+                <footer class="bg-slate-900 text-slate-400 py-10 px-4 mt-auto border-t border-slate-800">
+                    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white">
+                                    <i class="fa-solid fa-print"></i>
+                                </div>
+                                <span class="font-bold text-white text-base">FATIN ART ADVERTISING</span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Pusat Percetakan, Sablon, Undangan & Souvenir Digital Terpercaya di Banyuwangi. Melayani cetak berkualitas cepat dan memuaskan.
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Alamat & Kontak</h3>
+                            <p class="text-xs text-slate-300 mb-2 flex items-start gap-2">
+                                <i class="fa-solid fa-location-dot text-brand-500 mt-0.5"></i>
+                                Dusun Tengororejo RT.01 RW.01 Ds. Songgon Kec. Songgon Kab. Banyuwangi
+                            </p>
+                            <p class="text-xs text-slate-300 flex items-center gap-2">
+                                <i class="fa-brands fa-whatsapp text-emerald-500"></i>
+                                WA Admin: ${state.adminWhatsApp}
+                            </p>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-semibold mb-3 text-xs uppercase tracking-wider">Slogan Resmi</h3>
+                            <div class="p-3 rounded-xl bg-slate-800 border border-slate-700/60 text-brand-400 font-bold text-center text-sm tracking-wide">
+                                “TERJANGKAU, CEPAT DAN BERKWALITAS, SATSET”
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-3 text-center">© 2026 Fatin Art Advertising. All rights reserved.</p>
+                        </div>
+                    </div>
+                </footer>
+            `;
+        }
+
+        // --- VIEW 1: LOGIN (DENGAN NOMOR WA AKTIF) ---
+        function renderLoginView(state) {
+            const remembered = state.savedLogin || { email: '', password: '', phone: '' };
+            return `
+                <div class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-slate-800 to-brand-950 relative overflow-hidden">
+                    <div class="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-brand-500/10 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-40 -right-40 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+
+                    <div class="max-w-md w-full glass-card rounded-3xl shadow-2xl p-8 border border-white/20 relative z-10 my-8">
+                        <div class="text-center mb-8">
+                            <div class="w-16 h-16 bg-gradient-to-tr from-brand-600 to-brand-500 text-white rounded-2xl mx-auto flex items-center justify-center shadow-xl shadow-brand-500/30 mb-4">
+                                <i class="fa-solid fa-print text-3xl"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-slate-900 tracking-tight">FATIN ART ADVERTISING</h2>
+                            <p class="text-xs font-semibold text-brand-600 uppercase tracking-wider mt-1">Katalog & Pemesanan Digital</p>
+                            <p class="text-xs text-slate-500 mt-2 italic">“TERJANGKAU, CEPAT DAN BERKWALITAS, SATSET”</p>
+                        </div>
+
+                        <form onsubmit="handleLogin(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Email Anda</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </span>
+                                    <input type="email" id="loginEmail" required value="${remembered.email}" placeholder="contoh: nama@gmail.com" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nomor WhatsApp Aktif <span class="text-rose-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-emerald-600">
+                                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                                    </span>
+                                    <input type="tel" id="loginPhone" required value="${remembered.phone || ''}" placeholder="Contoh: 081234567890" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-1">Nomor WhatsApp wajib aktif untuk konfirmasi pesanan & nota.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </span>
+                                    <input type="password" id="loginPassword" required value="${remembered.password}" placeholder="Masukkan password" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition">
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between text-xs py-1">
+                                <label class="flex items-center gap-2 cursor-pointer select-none">
+                                    <input type="checkbox" id="rememberMe" ${remembered.email ? 'checked' : ''} class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500">
+                                    <span class="text-slate-600 font-medium">Ingatkan saya</span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="w-full py-3.5 px-4 bg-gradient-to-r from-brand-600 to-brand-500 text-white font-bold rounded-xl shadow-lg shadow-brand-500/30 hover:from-brand-700 hover:to-brand-600 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-right-to-bracket"></i> Masuk Aplikasi
+                            </button>
+                        </form>
+
+                        <div class="mt-6 pt-6 border-t border-slate-200 text-center">
+                            <p class="text-xs text-slate-500 mb-2">Login Admin: Gunakan email admin dan password Anda.</p>
+                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-semibold">
+                                <i class="fa-brands fa-whatsapp text-emerald-600"></i> CS Admin WA: ${state.adminWhatsApp}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const phone = document.getElementById('loginPhone').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+            const remember = document.getElementById('rememberMe').checked;
+
+            const state = getState();
+            
+            if (remember) {
+                state.savedLogin = { email, password: pass, phone };
+            } else {
+                state.savedLogin = null;
+            }
+
+            let role = 'customer';
+            let name = email.split('@')[0];
+            name = name.charAt(0).toUpperCase() + name.slice(1);
+            let customerCode = '';
+
+            if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+                role = 'admin';
+                name = 'Admin Fatin Art';
+            } else {
+                let existingCust = state.customers.find(c => c.email.toLowerCase() === email);
+                if (existingCust) {
+                    customerCode = existingCust.code;
+                    name = existingCust.name;
+                    existingCust.phone = phone; // Update WA aktif terbaru
+                } else {
+                    customerCode = 'CUST-' + Math.floor(100 + Math.random() * 900);
+                    state.customers.push({
+                        code: customerCode,
+                        name: name,
+                        email: email,
+                        phone: phone,
+                        registeredAt: new Date().toISOString().split('T')[0]
+                    });
+                }
+            }
+
+            state.currentUser = {
+                email,
+                name,
+                role,
+                customerCode,
+                phone: role === 'customer' ? phone : state.adminWhatsApp
+            };
+
+            saveState(state);
+            showToast(`Berhasil masuk sebagai ${role === 'admin' ? 'Admin' : 'Pelanggan'}!`, 'success');
+            setTimeout(() => { render(); }, 300);
+        }
+
+        function logout() {
+            const state = getState();
+            state.currentUser = null;
+            saveState(state);
+            cart = [];
+            currentView = 'login';
+            showToast('Anda telah keluar dari aplikasi', 'info');
+            render();
+        }
+
+        function switchView(view) {
+            currentView = view;
+            render();
+        }
+
+        // --- VIEW 2: CUSTOMER CATALOG ---
+        let selectedCategory = 'Semua';
+        let searchQuery = '';
+
+        function renderCustomerCatalogView(state) {
+            const categories = ['Semua', 'Banner', 'Undangan', 'Stempel', 'Nota', 'Sablon', 'Yasin', 'Stiker', 'Foto', 'Undangan Seri'];
+            
+            const filteredProducts = state.products.filter(p => {
+                const matchCat = selectedCategory === 'Semua' || p.category === selectedCategory || (selectedCategory === 'Undangan Seri' && p.category.includes('Undangan'));
+                const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchCat && matchSearch;
+            });
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+                    <div class="relative rounded-3xl bg-gradient-to-r from-slate-900 via-brand-950 to-slate-900 text-white p-8 sm:p-12 mb-10 overflow-hidden shadow-2xl">
+                        <div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-brand-500/20 blur-3xl pointer-events-none"></div>
+                        <div class="max-w-2xl relative z-10">
+                            <span class="px-3 py-1 rounded-full bg-brand-500/30 text-brand-300 text-xs font-bold uppercase tracking-wider mb-4 inline-block border border-brand-500/30">
+                                Katalog Digital Resmi
+                            </span>
+                            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">FATIN ART ADVERTISING</h2>
+                            <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+                                Solusi cetak kilat, undangan elegan, banner berkualitas, stempel flash, dan berbagai kebutuhan promosi bisnis Anda.
+                            </p>
+                            <div class="flex flex-wrap items-center gap-4">
+                                <a href="https://wa.me/${state.adminWhatsApp}?text=Halo%20Admin%20Fatin%20Art,%20saya%20ingin%20konsultasi%20cetak." target="_blank" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
+                                    <i class="fa-brands fa-whatsapp text-lg"></i> Chat Admin WhatsApp
+                                </a>
+                                <button onclick="shareCatalogLink()" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm backdrop-blur border border-white/20 transition flex items-center gap-2">
+                                    <i class="fa-solid fa-share-nodes"></i> Bagikan Katalog
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+                        <div class="flex items-center gap-2 overflow-x-auto w-full pb-2 md:pb-0">
+                            ${categories.map(cat => `
+                                <button onclick="selectCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition ${selectedCategory === cat ? 'bg-brand-600 text-white shadow-md shadow-brand-600/30' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'}">
+                                    ${cat}
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <div class="w-full md:w-72 relative">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="text" id="catalogSearch" oninput="handleSearch(this.value)" value="${searchQuery}" placeholder="Cari produk / layanan..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        ${filteredProducts.map(p => `
+                            <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
+                                <div class="relative h-48 overflow-hidden bg-slate-100">
+                                    <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/600x400/e05638/ffffff?text=Fatin+Art'">
+                                    <div class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                                        ${p.category}
+                                    </div>
+                                </div>
+                                <div class="p-5 flex-1 flex flex-col">
+                                    <h3 class="font-bold text-slate-900 text-base mb-1 group-hover:text-brand-600 transition">${p.name}</h3>
+                                    <p class="text-xs text-slate-500 leading-relaxed mb-4 flex-1">${p.desc}</p>
+                                    
+                                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
+                                        <div>
+                                            <span class="text-[10px] uppercase font-bold text-slate-400 block">Harga</span>
+                                            <span class="font-extrabold text-brand-600 text-base">${formatRupiah(p.price)}</span>
+                                        </div>
+                                        <button onclick="addToCart('${p.id}')" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md shadow-brand-600/20 transition flex items-center gap-2">
+                                            <i class="fa-solid fa-cart-plus"></i> Beli
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    ${filteredProducts.length === 0 ? `
+                        <div class="text-center py-16 bg-white rounded-3xl border border-slate-200 mt-6">
+                            <i class="fa-solid fa-box-open text-4xl text-slate-300 mb-3"></i>
+                            <p class="font-bold text-slate-700">Produk tidak ditemukan</p>
+                            <p class="text-xs text-slate-500 mt-1">Coba kata kunci lain atau pilih kategori berbeda.</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function selectCategory(cat) {
+            selectedCategory = cat;
+            render();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val;
+            render();
+        }
+
+        function shareCatalogLink() {
+            const url = window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('Link katalog berhasil disalin ke clipboard!', 'success');
+                }).catch(() => { prompt('Salin link katalog berikut:', url); });
+            } else { prompt('Salin link katalog berikut:', url); }
+        }
+
+        // --- CART & CHECKOUT MODAL ---
+        function addToCart(productId) {
+            const state = getState();
+            const prod = state.products.find(p => p.id === productId);
+            if (!prod) return;
+
+            const existing = cart.find(i => i.id === productId);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...prod, qty: 1 });
+            }
+            showToast(`Berhasil menambahkan "${prod.name}" ke keranjang`, 'success');
+            render();
+        }
+
+        function openCartModal() {
+            const modalHTML = `
+                <div id="cartModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-slate-900 text-base">Keranjang Belanja</h3>
+                                    <p class="text-xs text-slate-500">Periksa pesanan Anda sebelum checkout</p>
+                                </div>
+                            </div>
+                            <button onclick="closeModal('cartModal')" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl">
+                                <i class="fa-solid fa-xmark text-lg"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex-1 overflow-y-auto py-4 space-y-3">
+                            ${cart.length === 0 ? `
+                                <div class="text-center py-12">
+                                    <i class="fa-solid fa-cart-shopping text-3xl text-slate-300 mb-2"></i>
+                                    <p class="text-slate-600 font-semibold text-sm">Keranjang Anda masih kosong</p>
+                                    <p class="text-xs text-slate-400 mt-1">Pilih produk dari katalog untuk mulai memesan.</p>
+                                </div>
+                            ` : cart.map((item, idx) => `
+                                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                                    <div class="flex-1 pr-3">
+                                        <h4 class="font-bold text-slate-800 text-sm">${item.name}</h4>
+                                        <p class="text-xs text-brand-600 font-semibold mt-0.5">${formatRupiah(item.price)}</p>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+                                            <button onclick="updateCartQty(${idx}, -1)" class="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-xs">-</button>
+                                            <span class="w-8 text-center text-xs font-bold">${item.qty}</span>
+                                            <button onclick="updateCartQty(${idx}, 1)" class="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-xs">+</button>
+                                        </div>
+                                        <button onclick="removeFromCart(${idx})" class="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition">
+                                            <i class="fa-solid fa-trash-can text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        ${cart.length > 0 ? `
+                            <div class="pt-4 border-t border-slate-100 space-y-4">
+                                <div class="flex items-center justify-between text-base font-bold text-slate-900">
+                                    <span>Total Pembayaran:</span>
+                                    <span class="text-brand-600 text-lg">${formatRupiah(cart.reduce((sum, i) => sum + (i.price * i.qty), 0))}</span>
+                                </div>
+                                <button onclick="proceedCheckout()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30 transition flex items-center justify-center gap-2">
+                                    <i class="fa-brands fa-whatsapp text-lg"></i> Checkout & Kirim ke WhatsApp Admin
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div);
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.parentElement.remove();
+        }
+
+        function updateCartQty(idx, delta) {
+            cart[idx].qty += delta;
+            if (cart[idx].qty <= 0) {
+                cart.splice(idx, 1);
+            }
+            closeModal('cartModal');
+            openCartModal();
+            render();
+        }
+
+        function removeFromCart(idx) {
+            cart.splice(idx, 1);
+            closeModal('cartModal');
+            if (cart.length > 0) openCartModal();
+            render();
+        }
+
+        function proceedCheckout() {
+            if (cart.length === 0) return;
+            const state = getState();
+            const user = state.currentUser;
+
+            const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+            const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+            const itemsCopy = [...cart];
+
+            const newOrder = {
+                id: orderId,
+                customerCode: user.customerCode,
+                customerName: user.name,
+                phone: user.phone,
+                items: itemsCopy,
+                total: total,
+                status: 'Dikonfirmasi Otomatis',
+                estCompletion: '1-2 Hari Kerja',
+                date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+                adminNotes: 'Pesanan masuk otomatis melalui sistem katalog digital.'
+            };
+
+            state.orders.unshift(newOrder);
+
+            const invoiceNo = 'INV-' + Math.floor(8000 + Math.random() * 1999);
+            state.invoices.unshift({
+                invoiceNo: invoiceNo,
+                orderId: orderId,
+                customerCode: user.customerCode,
+                customerName: user.name,
+                items: itemsCopy,
+                total: total,
+                status: 'Belum Lunas / Tunai',
+                notes: 'Nota otomatis dari sistem Fatin Art Advertising. Silakan lakukan pembayaran ke Admin atau saat pengambilan.',
+                date: new Date().toISOString().split('T')[0]
+            });
+
+            saveState(state);
+
+            let itemsText = itemsCopy.map(i => `- ${i.name} (${i.qty}x @${formatRupiah(i.price)})`).join('%0A');
+            let waMessage = `Halo Admin Fatin Art Advertising,%0A%0ASaya ingin memesan produk berikut:%0A*Kode Pelanggan:* ${user.customerCode}%0A*Nama:* ${user.name}%0A*No WA Aktif:* ${user.phone}%0A*ID Pesanan:* ${orderId}%0A%0A*Rincian Pesanan:*%0A${itemsText}%0A%0A*Total:* ${formatRupiah(total)}%0A%0AMohon konfirmasi dan proses pesanan saya. Terima kasih!`;
+
+            cart = [];
+            closeModal('cartModal');
+            showToast('Pesanan berhasil dibuat & dikonfirmasi otomatis!', 'success');
+            render();
+
+            window.open(`https://wa.me/${state.adminWhatsApp}?text=${waMessage}`, '_blank');
+        }
+
+        // --- VIEW 3: CUSTOMER ORDERS & INVOICES ---
+        function renderCustomerOrdersView(state) {
+            const user = state.currentUser;
+            const myOrders = state.orders.filter(o => o.customerCode === user.customerCode);
+            const myInvoices = state.invoices.filter(i => i.customerCode === user.customerCode);
+
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Riwayat Pesanan & Nota Saya</h2>
+                            <p class="text-xs text-slate-500 mt-1">Kode Pelanggan: <span class="font-bold text-brand-600">${user.customerCode}</span> • No WA: <span class="text-emerald-600 font-bold">${user.phone}</span></p>
+                        </div>
+                        <button onclick="switchView('catalog')" class="px-4 py-2 bg-brand-50 text-brand-700 hover:bg-brand-100 font-semibold text-xs rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Kembali ke Katalog
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-box-archive text-brand-600"></i> Daftar Pesanan Anda
+                            </h3>
+                            <div class="space-y-4">
+                                ${myOrders.length === 0 ? `
+                                    <div class="bg-white rounded-3xl p-8 text-center border border-slate-200">
+                                        <p class="text-xs text-slate-500">Belum ada pesanan tercatat.</p>
+                                    </div>
+                                ` : myOrders.map(ord => `
+                                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-brand-50 text-brand-700">${ord.id}</span>
+                                                <span class="text-xs text-slate-400 ml-2">${ord.date}</span>
+                                            </div>
+                                            <span class="px-3 py-1 rounded-full text-xs font-bold ${ord.status.includes('Dikonfirmasi') ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">${ord.status}</span>
+                                        </div>
+
+                                        <div class="border-t border-b border-slate-100 py-3 space-y-2">
+                                            ${ord.items.map(i => `
+                                                <div class="flex justify-between text-xs">
+                                                    <span class="text-slate-700 font-medium">${i.name} (x${i.qty})</span>
+                                                    <span class="font-bold text-slate-900">${formatRupiah(i.price * i.qty)}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+
+                                        <div class="flex items-center justify-between pt-1">
+                                            <div>
+                                                <p class="text-[10px] uppercase font-bold text-slate-400">Estimasi Selesai</p>
+                                                <p class="text-xs font-bold text-slate-800">${ord.estCompletion}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="text-[10px] uppercase font-bold text-slate-400 block">Total</span>
+                                                <span class="font-extrabold text-brand-600 text-sm">${formatRupiah(ord.total)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-file-invoice-dollar text-emerald-600"></i> Nota Pembayaran Resmi
+                            </h3>
+                            <div class="space-y-4">
+                                ${myInvoices.length === 0 ? `
+                                    <div class="bg-white rounded-3xl p-8 text-center border border-slate-200">
+                                        <p class="text-xs text-slate-500">Belum ada nota diterbitkan oleh admin.</p>
+                                    </div>
+                                ` : myInvoices.map(inv => `
+                                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4 relative overflow-hidden">
+                                        <div class="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] font-bold px-4 py-1 rounded-bl-2xl">
+                                            ${inv.status}
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-slate-900 text-base">${inv.invoiceNo}</h4>
+                                            <p class="text-xs text-slate-400">Ref Pesanan: ${inv.orderId} • Tanggal: ${inv.date}</p>
+                                        </div>
+
+                                        <div class="bg-slate-50 rounded-2xl p-4 text-xs space-y-2 border border-slate-100">
+                                            ${inv.items.map(i => `
+                                                <div class="flex justify-between">
+                                                    <span>${i.name} (x${i.qty})</span>
+                                                    <span class="font-bold">${formatRupiah(i.price * i.qty)}</span>
+                                                </div>
+                                            `).join('')}
+                                            <div class="pt-2 border-t border-slate-200 flex justify-between font-bold text-slate-900 text-sm">
+                                                <span>Total Tagihan:</span>
+                                                <span class="text-brand-600">${formatRupiah(inv.total)}</span>
+                                            </div>
+                                        </div>
+
+                                        <p class="text-xs text-slate-500 italic bg-amber-50/60 p-3 rounded-xl border border-amber-200/50">
+                                            <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i> ${inv.notes}
+                                        </p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- VIEW 4: ADMIN PANEL ---
+        let adminTab = 'catalog_mgmt';
+
+        function renderAdminView(state) {
+            return `
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+                    <div class="bg-gradient-to-r from-slate-900 to-brand-950 text-white rounded-3xl p-6 sm:p-8 mb-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div>
+                            <span class="px-3 py-1 rounded-full bg-brand-500/30 text-brand-300 text-xs font-bold uppercase tracking-wider mb-2 inline-block border border-brand-500/30">
+                                Panel Kontrol Admin Terproteksi
+                            </span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">FATIN ART ADVERTISING MANAGEMENT</h2>
+                            <p class="text-slate-300 text-xs sm:text-sm mt-1">Kelola nomor WA admin, edit katalog/foto produk, buat nota, dan pantau pelanggan.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="px-4 py-3 bg-white/10 backdrop-blur rounded-2xl border border-white/10 text-center">
+                                <span class="block text-[10px] text-slate-400 uppercase font-bold">WhatsApp Admin</span>
+                                <span class="text-sm font-extrabold text-emerald-400">${state.adminWhatsApp}</span>
+                            </div>
+                            <div class="px-4 py-3 bg-white/10 backdrop-blur rounded-2xl border border-white/10 text-center">
+                                <span class="block text-[10px] text-slate-400 uppercase font-bold">Total Produk</span>
+                                <span class="text-xl font-extrabold text-white">${state.products.length}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Admin Tabs Navigation -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-4 mb-6">
+                        <button onclick="setAdminTab('catalog_mgmt')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 whitespace-nowrap ${adminTab === 'catalog_mgmt' ? 'bg-brand-600 text-white shadow-md shadow-brand-600/30' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}">
+                            <i class="fa-solid fa-tags"></i> Kelola Katalog & Gambar (${state.products.length})
+                        </button>
+                        <button onclick="setAdminTab('orders_mgmt')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 whitespace-nowrap ${adminTab === 'orders_mgmt' ? 'bg-brand-600 text-white shadow-md shadow-brand-600/30' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}">
+                            <i class="fa-solid fa-box-archive"></i> Kelola Pesanan (${state.orders.length})
+                        </button>
+                        <button onclick="setAdminTab('invoices_mgmt')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 whitespace-nowrap ${adminTab === 'invoices_mgmt' ? 'bg-brand-600 text-white shadow-md shadow-brand-600/30' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}">
+                            <i class="fa-solid fa-file-invoice-dollar"></i> Kelola Nota (${state.invoices.length})
+                        </button>
+                        <button onclick="setAdminTab('customers_mgmt')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 whitespace-nowrap ${adminTab === 'customers_mgmt' ? 'bg-brand-600 text-white shadow-md shadow-brand-600/30' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'}">
+                            <i class="fa-solid fa-users"></i> Pelanggan & Edit No WA Admin
+                        </button>
+                    </div>
+
+                    <!-- TAB 1: CATALOG MANAGEMENT -->
+                    ${adminTab === 'catalog_mgmt' ? `
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold text-slate-900 text-lg">Daftar Produk & Layanan Katalog</h3>
+                                <button onclick="openAddProductModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md shadow-brand-600/20 transition flex items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> Tambah Produk Baru
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${state.products.map(p => `
+                                    <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm flex flex-col">
+                                        <div class="relative h-44 bg-slate-100">
+                                            <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400/e05638/ffffff?text=Fatin+Art'">
+                                            <span class="absolute top-3 left-3 bg-slate-900/80 text-white text-[10px] font-bold px-2.5 py-1 rounded-full">${p.category}</span>
+                                        </div>
+                                        <div class="p-5 flex-1 flex flex-col justify-between">
+                                            <div>
+                                                <h4 class="font-bold text-slate-900 text-base mb-1">${p.name}</h4>
+                                                <p class="text-xs text-slate-500 mb-3 line-clamp-2">${p.desc}</p>
+                                                <p class="font-extrabold text-brand-600 text-sm mb-4">${formatRupiah(p.price)}</p>
+                                            </div>
+                                            <div class="flex items-center gap-2 pt-3 border-t border-slate-100">
+                                                <button onclick="openEditProductModal('${p.id}')" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+                                                    <i class="fa-solid fa-pen-to-square"></i> Edit Produk / Foto
+                                                </button>
+                                                <button onclick="deleteProduct('${p.id}')" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition" title="Hapus Produk">
+                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- TAB 2: ORDERS MANAGEMENT -->
+                    ${adminTab === 'orders_mgmt' ? `
+                        <div class="space-y-6">
+                            <h3 class="font-bold text-slate-900 text-lg">Kelola Pesanan Masuk Pelanggan</h3>
+                            <div class="space-y-4">
+                                ${state.orders.length === 0 ? `
+                                    <div class="bg-white rounded-3xl p-12 text-center border border-slate-200">
+                                        <p class="text-slate-500 text-xs">Belum ada pesanan masuk.</p>
+                                    </div>
+                                ` : state.orders.map(ord => `
+                                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                            <div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="font-bold text-slate-900 text-base">${ord.id}</span>
+                                                    <span class="text-xs px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 font-bold">${ord.customerCode}</span>
+                                                </div>
+                                                <p class="text-xs text-slate-500 mt-0.5">Pemesan: <strong class="text-slate-800">${ord.customerName}</strong> • WA: <span class="text-emerald-600 font-bold">${ord.phone}</span> • ${ord.date}</p>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <select onchange="updateOrderStatus('${ord.id}', this.value)" class="text-xs font-bold px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50">
+                                                    <option ${ord.status === 'Diproses' ? 'selected' : ''}>Diproses</option>
+                                                    <option ${ord.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                                                    <option ${ord.status === 'Dikonfirmasi Otomatis' ? 'selected' : ''}>Dikonfirmasi Otomatis</option>
+                                                </select>
+                                                <a href="https://wa.me/${ord.phone}?text=Halo%20${encodeURIComponent(ord.customerName)},%20pesanan%20Anda%20di%20Fatin%20Art%20Advertising%20(${ord.id})%20sedang%20kami%20proses.%20Terima%20kasih!" target="_blank" class="p-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl transition" title="Kirim WA ke Pelanggan">
+                                                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                                                </a>
+                                                <button onclick="deleteOrder('${ord.id}')" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition" title="Hapus Pesanan">
+                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-slate-50 rounded-2xl p-4 text-xs space-y-2 border border-slate-100">
+                                            ${ord.items.map(i => `
+                                                <div class="flex justify-between">
+                                                    <span class="text-slate-700">${i.name} (x${i.qty})</span>
+                                                    <span class="font-bold">${formatRupiah(i.price * i.qty)}</span>
+                                                </div>
+                                            `).join('')}
+                                            <div class="pt-2 border-t border-slate-200 flex justify-between font-extrabold text-slate-900 text-sm">
+                                                <span>Total:</span>
+                                                <span class="text-brand-600">${formatRupiah(ord.total)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- TAB 3: INVOICES MANAGEMENT -->
+                    ${adminTab === 'invoices_mgmt' ? `
+                        <div class="space-y-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold text-slate-900 text-lg">Kelola Nota Pembayaran</h3>
+                                <button onclick="openCreateInvoiceModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md shadow-brand-600/20 transition flex items-center gap-2">
+                                    <i class="fa-solid fa-file-circle-plus"></i> Buat Nota Manual Baru
+                                </button>
+                            </div>
+
+                            <div class="space-y-4">
+                                ${state.invoices.length === 0 ? `
+                                    <div class="bg-white rounded-3xl p-12 text-center border border-slate-200">
+                                        <p class="text-slate-500 text-xs">Belum ada nota diterbitkan.</p>
+                                    </div>
+                                ` : state.invoices.map(inv => `
+                                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                            <div>
+                                                <span class="font-bold text-slate-900 text-base">${inv.invoiceNo}</span>
+                                                <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold ml-2">${inv.status}</span>
+                                                <p class="text-xs text-slate-500 mt-0.5">Pelanggan: <strong class="text-slate-800">${inv.customerName}</strong> (${inv.customerCode}) • ${inv.date}</p>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <button onclick="openEditInvoiceModal('${inv.invoiceNo}')" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                                                    <i class="fa-solid fa-pen-to-square mr-1"></i> Edit Nota
+                                                </button>
+                                                <button onclick="deleteInvoice('${inv.invoiceNo}')" class="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl transition">
+                                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-slate-50 rounded-2xl p-4 text-xs space-y-2 border border-slate-100">
+                                            ${inv.items.map(i => `
+                                                <div class="flex justify-between">
+                                                    <span>${i.name} (x${i.qty})</span>
+                                                    <span class="font-bold">${formatRupiah(i.price * i.qty)}</span>
+                                                </div>
+                                            `).join('')}
+                                            <div class="pt-2 border-t border-slate-200 flex justify-between font-bold text-slate-900 text-sm">
+                                                <span>Total:</span>
+                                                <span class="text-brand-600">${formatRupiah(inv.total)}</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-slate-500 italic bg-amber-50/50 p-3 rounded-xl border border-amber-200/40">
+                                            <strong>Keterangan Admin:</strong> ${inv.notes}
+                                        </p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <!-- TAB 4: CUSTOMERS & EDIT ADMIN WA -->
+                    ${adminTab === 'customers_mgmt' ? `
+                        <div class="space-y-8">
+                            <!-- Box Pengaturan Nomor WA Admin -->
+                            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-900 text-base">Pengaturan Nomor WhatsApp Admin</h3>
+                                        <p class="text-xs text-slate-500">Nomor ini digunakan untuk penerimaan pesanan dari seluruh pelanggan.</p>
+                                    </div>
+                                </div>
+                                <form onsubmit="updateAdminWhatsApp(event)" class="flex flex-col sm:flex-row gap-3">
+                                    <input type="text" id="newAdminWaInput" required value="${state.adminWhatsApp}" placeholder="Contoh: 6282220221045" class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold">
+                                    <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition">
+                                        Simpan Nomor WA Admin
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="font-bold text-slate-900 text-lg">Database Pelanggan & Nomor WhatsApp Aktif</h3>
+                                    <button onclick="openAddCustomerModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md shadow-brand-600/20 transition flex items-center gap-2">
+                                        <i class="fa-solid fa-user-plus"></i> Tambah Pelanggan Manual
+                                    </button>
+                                </div>
+
+                                <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-left border-collapse text-xs">
+                                            <thead>
+                                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-bold text-[10px]">
+                                                    <th class="p-4">Kode Pelanggan</th>
+                                                    <th class="p-4">Nama Pelanggan</th>
+                                                    <th class="p-4">Nomor WhatsApp Aktif</th>
+                                                    <th class="p-4">Email</th>
+                                                    <th class="p-4">Tanggal Daftar</th>
+                                                    <th class="p-4 text-right">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100">
+                                                ${state.customers.map(c => `
+                                                    <tr class="hover:bg-slate-50/60">
+                                                        <td class="p-4 font-bold text-brand-600">${c.code}</td>
+                                                        <td class="p-4 font-semibold text-slate-800">${c.name}</td>
+                                                        <td class="p-4 font-medium text-emerald-600 flex items-center gap-1.5">
+                                                            <i class="fa-brands fa-whatsapp text-sm"></i> ${c.phone}
+                                                        </td>
+                                                        <td class="p-4 text-slate-500">${c.email}</td>
+                                                        <td class="p-4 text-slate-500">${c.registeredAt}</td>
+                                                        <td class="p-4 text-right">
+                                                            <a href="https://wa.me/${c.phone}?text=Halo%20${encodeURIComponent(c.name)},%20terima%20kasih%20telah%20berlangganan%20di%20Fatin%20Art%20Advertising." target="_blank" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 font-bold rounded-lg hover:bg-emerald-100 transition inline-flex items-center gap-1">
+                                                                <i class="fa-brands fa-whatsapp"></i> Chat
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function setAdminTab(tab) {
+            adminTab = tab;
+            render();
+        }
+
+        // --- ADMIN ACTIONS & MODALS ---
+        function updateAdminWhatsApp(e) {
+            e.preventDefault();
+            const newWa = document.getElementById('newAdminWaInput').value.trim();
+            const state = getState();
+            state.adminWhatsApp = newWa;
+            saveState(state);
+            showToast('Nomor WhatsApp Admin berhasil diperbarui!', 'success');
+            render();
+        }
+
+        function openAddProductModal() {
+            const modalHTML = `
+                <div id="productModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                            <h3 class="font-bold text-slate-900 text-base">Tambah Produk Katalog Baru</h3>
+                            <button onclick="closeModal('productModal')" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                        <form onsubmit="saveNewProduct(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Produk</label>
+                                <input type="text" id="prodName" required placeholder="Contoh: Banner Lebaran" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kategori</label>
+                                <select id="prodCat" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                                    <option>Banner</option>
+                                    <option>Undangan</option>
+                                    <option>Stempel</option>
+                                    <option>Nota</option>
+                                    <option>Sablon</option>
+                                    <option>Yasin</option>
+                                    <option>Stiker</option>
+                                    <option>Foto</option>
+                                    <option>Undangan Seri</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Harga (Rp)</label>
+                                <input type="number" id="prodPrice" required placeholder="25000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">URL Gambar Produk</label>
+                                <input type="url" id="prodImg" required placeholder="https://placehold.co/600x400/e05638/ffffff?text=Produk" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Deskripsi Singkat</label>
+                                <textarea id="prodDesc" rows="3" required placeholder="Deskripsi bahan dan kualitas..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30">Simpan Produk Baru</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div);
+        }
+
+        function saveNewProduct(e) {
+            e.preventDefault();
+            const state = getState();
+            state.products.push({
+                id: 'p-' + Date.now(),
+                name: document.getElementById('prodName').value,
+                category: document.getElementById('prodCat').value,
+                price: Number(document.getElementById('prodPrice').value),
+                img: document.getElementById('prodImg').value,
+                desc: document.getElementById('prodDesc').value
+            });
+            saveState(state);
+            closeModal('productModal');
+            showToast('Produk katalog berhasil ditambahkan!', 'success');
+            render();
+        }
+
+        function openEditProductModal(id) {
+            const state = getState();
+            const p = state.products.find(item => item.id === id);
+            if (!p) return;
+
+            const modalHTML = `
+                <div id="productModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                            <h3 class="font-bold text-slate-900 text-base">Edit Produk & Gambar Katalog</h3>
+                            <button onclick="closeModal('productModal')" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                        <form onsubmit="updateProduct(event, '${p.id}')" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Produk</label>
+                                <input type="text" id="editProdName" required value="${p.name}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kategori</label>
+                                <input type="text" id="editProdCat" required value="${p.category}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Harga (Rp)</label>
+                                <input type="number" id="editProdPrice" required value="${p.price}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Ganti URL Gambar</label>
+                                <input type="url" id="editProdImg" required value="${p.img}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Deskripsi</label>
+                                <textarea id="editProdDesc" rows="3" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">${p.desc}</textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30">Perbarui Katalog</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div);
+        }
+
+        function updateProduct(e, id) {
+            e.preventDefault();
+            const state = getState();
+            const p = state.products.find(item => item.id === id);
+            if (p) {
+                p.name = document.getElementById('editProdName').value;
+                p.category = document.getElementById('editProdCat').value;
+                p.price = Number(document.getElementById('editProdPrice').value);
+                p.img = document.getElementById('editProdImg').value;
+                p.desc = document.getElementById('editProdDesc').value;
+                saveState(state);
+                closeModal('productModal');
+                showToast('Katalog produk berhasil diperbarui!', 'success');
+                render();
+            }
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Yakin ingin menghapus produk ini dari katalog?')) {
+                const state = getState();
+                state.products = state.products.filter(p => p.id !== id);
+                saveState(state);
+                showToast('Produk dihapus', 'info');
+                render();
+            }
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const state = getState();
+            const ord = state.orders.find(o => o.id === orderId);
+            if (ord) {
+                ord.status = newStatus;
+                saveState(state);
+                showToast(`Status pesanan ${orderId} diubah ke ${newStatus}`, 'success');
+                render();
+            }
+        }
+
+        function deleteOrder(orderId) {
+            if (confirm('Hapus pesanan ini?')) {
+                const state = getState();
+                state.orders = state.orders.filter(o => o.id !== orderId);
+                saveState(state);
+                showToast('Pesanan dihapus', 'info');
+                render();
+            }
+        }
+
+        function openAddCustomerModal() {
+            const modalHTML = `
+                <div id="custModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                            <h3 class="font-bold text-slate-900 text-base">Tambah Pelanggan Baru Manual</h3>
+                            <button onclick="closeModal('custModal')" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                        <form onsubmit="saveNewCustomer(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Lengkap</label>
+                                <input type="text" id="custName" required placeholder="Bpk. Ahmad" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nomor WhatsApp Aktif</label>
+                                <input type="text" id="custPhone" required placeholder="08123456789" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Email Pelanggan</label>
+                                <input type="email" id="custEmail" required placeholder="ahmad@gmail.com" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30">Simpan ke Database</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div);
+        }
+
+        function saveNewCustomer(e) {
+            e.preventDefault();
+            const state = getState();
+            const code = 'CUST-' + Math.floor(100 + Math.random() * 900);
+            state.customers.push({
+                code: code,
+                name: document.getElementById('custName').value,
+                phone: document.getElementById('custPhone').value,
+                email: document.getElementById('custEmail').value,
+                registeredAt: new Date().toISOString().split('T')[0]
+            });
+            saveState(state);
+            closeModal('custModal');
+            showToast(`Pelanggan baru ditambahkan dengan kode ${code}`, 'success');
+            render();
+        }
+
+        function openCreateInvoiceModal() {
+            const state = getState();
+            const modalHTML = `
+                <div id="invModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                            <h3 class="font-bold text-slate-900 text-base">Buat Nota Pembayaran Manual</h3>
+                            <button onclick="closeModal('invModal')" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                        <form onsubmit="saveManualInvoice(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Pilih Pelanggan</label>
+                                <select id="invCustCode" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                                    ${state.customers.map(c => `<option value="${c.code}">${c.name} (${c.code})</option>`).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nama Barang / Layanan</label>
+                                <input type="text" id="invItemName" required placeholder="Cetak Banner 3x1" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Jumlah (Qty)</label>
+                                    <input type="number" id="invQty" required value="1" min="1" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Harga Satuan (Rp)</label>
+                                    <input type="number" id="invPrice" required placeholder="50000" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Status Pembayaran</label>
+                                <select id="invStatus" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                                    <option>Lunas</option>
+                                    <option>Belum Lunas / Tunai</option>
+                                    <option>DP 50%</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Keterangan / Pesan Admin di Nota</label>
+                                <textarea id="invNotes" rows="2" placeholder="Terima kasih, pesanan selesai jam 14.00" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">Terima kasih atas pesanan Anda di Fatin Art Advertising.</textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30">Terbitkan Nota Resmi</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div);
+        }
+
+        function saveManualInvoice(e) {
+            e.preventDefault();
+            const state = getState();
+            const custCode = document.getElementById('invCustCode').value;
+            const cust = state.customers.find(c => c.code === custCode);
+            const qty = Number(document.getElementById('invQty').value);
+            const price = Number(document.getElementById('invPrice').value);
+            const total = qty * price;
+
+            const invNo = 'INV-' + Math.floor(8000 + Math.random() * 1999);
+            state.invoices.unshift({
+                invoiceNo: invNo,
+                orderId: 'ORD-MANUAL',
+                customerCode: custCode,
+                customerName: cust ? cust.name : 'Pelanggan',
+                items: [{ name: document.getElementById('invItemName').value, qty, price }],
+                total: total,
+                status: document.getElementById('invStatus').value,
+                notes: document.getElementById('invNotes').value,
+                date: new Date().toISOString().split('T')[0]
+            });
+            saveState(state);
+            closeModal('invModal');
+            showToast(`Nota ${invNo} berhasil diterbitkan!`, 'success');
+            render();
+        }
+
+        function openEditInvoiceModal(invoiceNo) {
+            const state = getState();
+            const inv = state.invoices.find(i => i.invoiceNo === invoiceNo);
+            if (!inv) return;
+
+            const modalHTML = `
+                <div id="invModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                            <h3 class="font-bold text-slate-900 text-base">Edit Nota: ${inv.invoiceNo}</h3>
+                            <button onclick="closeModal('invModal')" class="p-2 text-slate-400 hover:text-slate-600 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                        <form onsubmit="updateManualInvoice(event, '${inv.invoiceNo}')" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Status Pembayaran</label>
+                                <select id="editInvStatus" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                                    <option ${inv.status === 'Lunas' ? 'selected' : ''}>Lunas</option>
+                                    <option ${inv.status.includes('Belum') ? 'selected' : ''}>Belum Lunas / Tunai</option>
+                                    <option ${inv.status.includes('DP') ? 'selected' : ''}>DP 50%</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Catatan / Keterangan Admin</label>
+                                <textarea id="editInvNotes" rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">${inv.notes}</textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-600/30">Simpan Perubahan Nota</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = modalHTML;
+            document.body.appendChild(div);
+        }
+
+        function updateManualInvoice(e, invoiceNo) {
+            e.preventDefault();
+            const state = getState();
+            const inv = state.invoices.find(i => i.invoiceNo === invoiceNo);
+            if (inv) {
+                inv.status = document.getElementById('editInvStatus').value;
+                inv.notes = document.getElementById('editInvNotes').value;
+                saveState(state);
+                closeModal('invModal');
+                showToast('Nota berhasil diperbarui!', 'success');
+                render();
+            }
+        }
+
+        function deleteInvoice(invoiceNo) {
+            if (confirm('Hapus nota ini?')) {
+                const state = getState();
+                state.invoices = state.invoices.filter(i => i.invoiceNo !== invoiceNo);
+                saveState(state);
+                showToast('Nota dihapus', 'info');
+                render();
+            }
+        }
+
+        window.onload = function() {
+            initApp();
+        };
+    </script>
+</body>
+</html>
